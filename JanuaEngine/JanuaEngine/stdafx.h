@@ -33,6 +33,6 @@
 #include <memory>
 #include <set>
 #include <utility>
-#include <hash_set>
+#include <unordered_set>
 
 #include <omp.h>

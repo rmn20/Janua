@@ -1,5 +1,5 @@
 /*  ******************************************************************************* **
- * GIGC - Grupo de Investigación de Gráficos por Computadora - UTN FRBA - Argentina
+ * GIGC - Grupo de Investigaciï¿½n de Grï¿½ficos por Computadora - UTN FRBA - Argentina
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  **
  * <copyright> copyright (c) 2013 </copyright>	
  * <autor> Leandro Roberto Barbagallo </autor>
@@ -34,16 +34,16 @@ public:
 	
 	~Vector3f(void);
 
-	Vector3f& Vector3f::operator = (const Vector3f& otherVec);
-	Vector3f& Vector3f::operator += (const Vector3f& otherVec);
-	Vector3f& Vector3f::operator -= (const Vector3f& otherVec);
-	Vector3f& Vector3f::operator *= (const Vector3f& otherVec);
-	Vector3f& Vector3f::operator /= (const float k);
+	Vector3f& operator = (const Vector3f& otherVec);
+	Vector3f& operator += (const Vector3f& otherVec);
+	Vector3f& operator -= (const Vector3f& otherVec);
+	Vector3f& operator *= (const Vector3f& otherVec);
+	Vector3f& operator /= (const float k);
 
-	Vector3f Vector3f::operator + (const Vector3f& otherVec);
-	Vector3f Vector3f::operator - (const Vector3f& otherVec);
-	Vector3f Vector3f::operator * (const float k); //Scalar multiply
-	Vector3f Vector3f::operator / (const float k);
+	Vector3f operator + (const Vector3f& otherVec);
+	Vector3f operator - (const Vector3f& otherVec);
+	Vector3f operator * (const float k); //Scalar multiply
+	Vector3f operator / (const float k);
 
 
 	friend Vector3f operator + (const Vector3f& lhs, const Vector3f& rhs);
@@ -51,16 +51,16 @@ public:
 
 	friend Vector3f operator * (const float k, const Vector3f& rhs );
 
-	Vector3f Vector3f::operator - (void) const; //Negate vector
+	Vector3f operator - (void) const; //Negate vector
 
-	bool Vector3f::operator == (const Vector3f& otherVec);
-	bool Vector3f::operator != ( const Vector3f& otherVec );
+	bool operator == (const Vector3f& otherVec);
+	bool operator != ( const Vector3f& otherVec );
 
 
 	float& operator [](int i){ return (vec[i]);}
 	const float& operator [](int i)const{ return (vec[i]); }
 
-	void Vector3f::Normalize(void);
+	void Normalize(void);
 
 	float Dot( const Vector3f& otherVec) const;
 	Vector3f Cross( const Vector3f& otherVec);

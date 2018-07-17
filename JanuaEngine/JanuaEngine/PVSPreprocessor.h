@@ -114,7 +114,7 @@ public:
 
 private:
 
-	string PVSPreprocessor::toString(const int n);
+	string toString(const int n);
 
 };
 

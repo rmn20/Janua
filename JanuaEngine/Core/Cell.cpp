@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "Cell.h"
-#include <alg.h>
 
 #include <algorithm>
 using std::find;

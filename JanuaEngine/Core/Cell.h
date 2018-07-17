@@ -1,5 +1,5 @@
 /*  ******************************************************************************* **
- * GIGC - Grupo de Investigación de Gráficos por Computadora - UTN FRBA - Argentina
+ * GIGC - Grupo de Investigaciï¿½n de Grï¿½ficos por Computadora - UTN FRBA - Argentina
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  **
  * <copyright> copyright (c) 2013 </copyright>	
  * <autor> Leandro Roberto Barbagallo </autor>
@@ -31,8 +31,8 @@ public:
 	vector<shared_ptr<Cell>> getVisibleCells() const { return m_visibleSetCells; };
 	void addVisibleCell(const shared_ptr<Cell> val);
 
-	friend bool Cell::operator == (const Cell& lhs, const Cell& rhs );
-	friend bool Cell::operator != (const Cell& lhs, const Cell& rhs );
+	friend bool operator == (const Cell& lhs, const Cell& rhs );
+	friend bool operator != (const Cell& lhs, const Cell& rhs );
 
 	void addModelId(int modelId);
 	void getModelsIds(vector<int>& modelIds) const;

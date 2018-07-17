@@ -1,5 +1,5 @@
 /*  ******************************************************************************* **
- * GIGC - Grupo de Investigación de Gráficos por Computadora - UTN FRBA - Argentina
+ * GIGC - Grupo de Investigaciï¿½n de Grï¿½ficos por Computadora - UTN FRBA - Argentina
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  **
  * <copyright> copyright (c) 2013 </copyright>	
  * <autor> Leandro Roberto Barbagallo </autor>
@@ -33,12 +33,12 @@ public:
 	Point3i(int x, int y, int z);
 	~Point3i(void);
 
-	friend bool Point3i::operator < (const Point3i& lhs, const Point3i& rhs );
-	friend bool Point3i::operator == (const Point3i& lhs, const Point3i& rhs );
-	friend bool Point3i::operator != (const Point3i& lhs, const Point3i& rhs );
+	friend bool operator < (const Point3i& lhs, const Point3i& rhs );
+	friend bool operator == (const Point3i& lhs, const Point3i& rhs );
+	friend bool operator != (const Point3i& lhs, const Point3i& rhs );
 
-	Point3i Point3i::operator + (const Point3i& otherPoint);
-	Point3i Point3i::operator - (const Point3i& otherPoint);
+	Point3i operator + (const Point3i& otherPoint);
+	Point3i operator - (const Point3i& otherPoint);
 
 	friend Point3i operator + (const Point3i& lhs, const Point3i& rhs);
 	friend Point3i operator - (const Point3i& lhs, const Point3i& rhs);

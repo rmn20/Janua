@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <limits.h>
 
 #include "SceneOptions.h"
 

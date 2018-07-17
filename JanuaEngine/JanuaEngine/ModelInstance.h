@@ -1,5 +1,5 @@
 /*  ******************************************************************************* **
- * GIGC - Grupo de Investigación de Gráficos por Computadora - UTN FRBA - Argentina
+ * GIGC - Grupo de Investigaciï¿½n de Grï¿½ficos por Computadora - UTN FRBA - Argentina
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  **
  * <copyright> copyright (c) 2013 </copyright>	
  * <autor> Leandro Roberto Barbagallo </autor>
@@ -60,7 +60,7 @@ public:
 	const SceneObjectType getModelType() const { return sceneObjectType; };
 
 
-	ModelInstance& ModelInstance::operator= (const ModelInstance& otherModelInstance);
+	ModelInstance& operator= (const ModelInstance& otherModelInstance);
 
 private:
 
