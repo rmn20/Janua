@@ -33,13 +33,6 @@ bool PVSPreprocessor::addMeshesFromXmlFile(const string inputPath)
 		errorMessages.push_back("The \"meshes\" node of the XML is empty.");
 		return false;
 	}
-	xml_attribute countAttr = meshesNode.attribute("count");
-	if(countAttr.empty())
-	{
-		errorMessages.push_back("The \"meshes\" has not a count property.");
-		return false;
-	}
-	int meshesCount = countAttr.as_int();
     int i = 0;
 	unordered_map<unsigned int, unsigned int> idMap;
 	for (xml_node meshNode = meshesNode.first_child(); meshNode; meshNode = meshNode.next_sibling())
@@ -47,8 +40,8 @@ bool PVSPreprocessor::addMeshesFromXmlFile(const string inputPath)
 		MeshData meshData;
 
 		//id
-		string idStr = meshNode.attribute("type").as_string();
-		meshData.id = meshNode.attribute("type").as_uint();
+		string idStr = meshNode.attribute("id").as_string();
+		meshData.id = meshNode.attribute("id").as_uint();
 
 		//Check unique
 		unordered_map<unsigned int, unsigned int>::iterator  it = idMap.find(meshData.id);
@@ -115,6 +108,8 @@ bool PVSPreprocessor::addMeshesFromXmlFile(const string inputPath)
 			errorMessages.push_back("The triCount [" + triCountStr + "] for the mesh with ID: " + idStr + " does not match with amount of coordinates [" + toString((int)vertexValuesCount) + "]");
 			continue;
 		}
+
+		meshes.push_back(meshData);
 	}
 
 
