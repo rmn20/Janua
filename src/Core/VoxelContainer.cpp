@@ -17,9 +17,9 @@ VoxelContainer::VoxelContainer(const Vector3f voxelSize, int voxelCountX, int vo
 	
 
 	m_voxelSize = voxelSize;
-	m_voxelCounts.x = voxelCountX + 1;
-	m_voxelCounts.y = voxelCountY + 1;
-	m_voxelCounts.z = voxelCountZ + 1;
+	m_voxelCounts.x = voxelCountX ;
+	m_voxelCounts.y = voxelCountY;
+	m_voxelCounts.z = voxelCountZ;
 
 }
 
