@@ -6,6 +6,9 @@
 #include <sstream>
 using namespace std;
 
+#include <cstring>
+#include <cstdio>
+
 #include "PVSDatabase.h"
 #include "..\Core\Vector3f.h"
 #include "SceneObjectType.h"
@@ -63,6 +66,11 @@ public:
 	*/
 	bool addMeshesFromXmlFile(const string inputPath);
 
+	/**
+	* Import meshes from the wavefront obj file
+	*/
+	bool addMeshesFromObjFile(const string inputPath);
+
 
 	/**
 	* Do the PVS building
@@ -89,6 +97,10 @@ private:
 	vector<MeshData> meshes;
 
 	vector<string> errorMessages;
+	
+	//Used by wavefront obj loader
+	void PVSPreprocessor::loadObjVertex(char* line, vector<float> &vertices, size_t attribs);
+	void PVSPreprocessor::loadObjFace(char* line, vector<float> &vertices, vector<float> &meshVerts);
 
 public:
 
@@ -106,6 +118,11 @@ public:
 	* The size of each voxel
 	*/
 	Vector3f voxelSize;
+
+	/**
+	* The size of each tile
+	*/
+	Vector3f tileSize;
 
 	/**
 	* The max size a cell can achieve

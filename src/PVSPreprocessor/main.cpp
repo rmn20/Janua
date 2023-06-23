@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
 		std::cout << "PVS Pre-processor \n";
 
 		//Check arguments count
-		if(argc != 11)
+		if(argc != 13)
 		{
-			std::cout << "USAGE: -inputPath C:\\folder\\myFile.xml -outputPath C:\\folder\\output.lrb -voxelSize 10.5;10.5;10.5 -sceneName myScene -maxCellSize 100;100;100";
+			std::cout << "USAGE: -inputPath C:\\folder\\myFile.xml -outputPath C:\\folder\\output.lrb -voxelSize 10.5;10.5;10.5 -sceneName myScene -maxCellSize 100;100;100 -tileSize 10;10;10";
 			exit(0);
 		}
 
@@ -70,14 +70,43 @@ int main(int argc, char* argv[])
 				preprocessor.maxCellSize.y = (float)atof(tokens[1].c_str());
 				preprocessor.maxCellSize.z = (float)atof(tokens[2].c_str());
 			}
+			else if(arg == "-tileSize")
+			{
+				vector<string> tokens = PVSPreprocessor::split(argv[i + 1], ';');
+				if(tokens.size() != 3)
+				{
+					std::cerr << "The tileSize is incorrect";
+					exit(1);
+				}
+				preprocessor.tileSize.x = (float)atof(tokens[0].c_str());
+				preprocessor.tileSize.y = (float)atof(tokens[1].c_str());
+				preprocessor.tileSize.z = (float)atof(tokens[2].c_str());
+			}
 		}
 
 		//Import models data
-		std::cout << "Importing XML file: " + inputPath + "\n";
-		if(!preprocessor.addMeshesFromXmlFile(inputPath))
+		std::cout << "Importing file: " + inputPath + "\n";
+		
+		std::string fileFormat = "";
+		if(inputPath.find_last_of('.') != -1) fileFormat = inputPath.substr(inputPath.find_last_of('.'), inputPath.size() - inputPath.find_last_of('.'));
+		std::cout << fileFormat << "\n";
+		
+		if(fileFormat == ".obj") 
 		{
-			std::cerr << preprocessor.getErrors();
-			exit(1);
+			if(!preprocessor.addMeshesFromObjFile(inputPath))
+			{
+				std::cerr << preprocessor.getErrors();
+				exit(1);
+			}
+
+		} 
+		else 
+		{
+			if(!preprocessor.addMeshesFromXmlFile(inputPath))
+			{
+				std::cerr << preprocessor.getErrors();
+				exit(1);
+			}
 		}
 
 		//Build PVS

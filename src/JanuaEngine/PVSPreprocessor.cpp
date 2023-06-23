@@ -117,6 +117,160 @@ bool PVSPreprocessor::addMeshesFromXmlFile(const string inputPath)
 	return true;
 }
 
+void PVSPreprocessor::loadObjVertex(char* line, vector<float> &vertices, size_t attribs) {
+	char* token = strtok(line, " ");
+	size_t tokens = 0;
+	
+    while(token) {
+        if(tokens > 0 && tokens-1 < attribs) vertices.push_back((float) atof(token));
+        token = strtok(NULL, " ");
+		tokens++;
+    }
+}
+
+void PVSPreprocessor::loadObjFace(char* line, vector<float> &vertices, vector<float> &meshVerts) {
+	char* token = strtok(line, " ");
+	size_t tokens = 0;
+	size_t vert = 0;
+	
+    while(token) {
+		
+        if(tokens > 0) {
+			int v = 0, uv = 0, n = 0;
+			
+			char* tmp = token;
+			size_t attrib = 0;
+			
+			while(tmp) {
+				if(attrib == 0) v = atoi(tmp);
+				else if(attrib == 1) uv = atoi(tmp);
+				else if(attrib == 2) n = atoi(tmp);
+				
+				attrib++;
+				tmp = strchr(tmp, '/');
+				if(tmp) tmp++;
+			}
+			if(vert >= 3) {
+				//polygon triangulation!
+				for(int i=0; i<3; i++) meshVerts.push_back(meshVerts[meshVerts.size() - 3*vert]);
+				for(int i=0; i<3; i++) meshVerts.push_back(meshVerts[meshVerts.size() - 6]);
+
+				vert + 2;
+			}
+			
+			if(v < 0) {
+				for(int i=0; i<3; i++) meshVerts.push_back(vertices[vertices.size() + v * 3 + i]);
+			} if(v > 0) {
+				for(int i=0; i<3; i++) meshVerts.push_back(vertices[(v-1) * 3 + i]);
+			} else {
+				errorMessages.push_back("Undefined behavior in wavefront obj loader, vertex ID can't be zero!");
+			}
+			
+			vert++;
+		}
+		
+        token = strtok(NULL, " ");
+		tokens++;
+    }
+}
+
+bool PVSPreprocessor::addMeshesFromObjFile(const string inputPath)
+{
+	FILE* f = fopen(inputPath.c_str(), "rt");
+	if(!f) {
+		errorMessages.push_back("Can't open file");
+		
+		return false;
+	}
+	
+	char line[1024] = {'\0'};
+	
+	if(!line) {
+		errorMessages.push_back("Can't allocate line");
+		fclose(f);
+		
+		return false;
+	}
+	
+	vector<float> vertices;
+	
+	MeshData meshData;
+	meshData.id = 0;
+	meshData.type = OCCLUDER;
+	
+	vector<float> meshVerts;
+	
+	Vector3f mins(FLT_MAX);
+	Vector3f maxs(FLT_MIN);
+	
+	while(fgets(line, 1024, f)) {
+		size_t size = strlen(line) - 1; //skip new line character
+		if(!size) continue;
+		
+		if(strstr(line, "o ") == line || strstr(line, "g ") == line) {
+			
+			if(meshVerts.size() > 0) {
+				meshData.trianglesCount = meshVerts.size() / 9;
+	
+				for(int i=0; i<meshVerts.size(); i+=3) {
+					mins.x = min(meshVerts[i + 0], mins.x);
+					mins.y = min(meshVerts[i + 1], mins.y);
+					mins.z = min(meshVerts[i + 2], mins.z);
+
+					maxs.x = max(meshVerts[i + 0], maxs.x);
+					maxs.y = max(meshVerts[i + 1], maxs.y);
+					maxs.z = max(meshVerts[i + 2], maxs.z);
+				}
+				
+				meshData.vertexData = new float[meshVerts.size()];
+				memcpy(meshData.vertexData, meshVerts.data(), meshVerts.size() * sizeof(float));
+				meshVerts.clear();
+				
+				meshes.push_back(meshData);
+				meshData.id++;
+				
+				meshData.trianglesCount = 0;
+				meshData.vertexData = NULL;
+			}
+			
+			
+		} else if(strstr(line, "v ") == line) {
+			loadObjVertex(line, vertices, 3);
+		} else if(strstr(line, "f ") == line) {
+			loadObjFace(line, vertices, meshVerts);
+		}
+		
+	}
+	
+	if(meshVerts.size() > 0) {
+		meshData.trianglesCount = meshVerts.size() / 9;
+	
+		for(int i=0; i<meshVerts.size(); i+=3) {
+			mins.x = min(meshVerts[i + 0], mins.x);
+			mins.y = min(meshVerts[i + 1], mins.y);
+			mins.z = min(meshVerts[i + 2], mins.z);
+
+			maxs.x = max(meshVerts[i + 0], maxs.x);
+			maxs.y = max(meshVerts[i + 1], maxs.y);
+			maxs.z = max(meshVerts[i + 2], maxs.z);
+		}
+		
+		meshData.vertexData = new float[meshVerts.size()];
+		memcpy(meshData.vertexData, meshVerts.data(), meshVerts.size() * sizeof(float));
+		meshVerts.clear();
+		
+		meshes.push_back(meshData);
+		meshData.id++;
+	}
+	
+	cout << "Min: " << mins.x << " " << mins.y << " " << mins.z << "\n";
+	cout << "Max: " << maxs.x << " " << maxs.y << " " << maxs.z << "\n";
+	
+	fclose(f);
+
+	return true;
+}
+
 string PVSPreprocessor::toString(const int n)
 {
 	stringstream ss;
@@ -130,10 +284,12 @@ void PVSPreprocessor::buildPVS()
 	//Create scene
 	SceneOptions ocSceneOptions;
 	ocSceneOptions.setMaxCellSize((int)maxCellSize.x, (int)maxCellSize.y, (int)maxCellSize.z);
+	ocSceneOptions.setSceneTileSize((int)tileSize.x, (int)tileSize.y, (int)tileSize.z);
 	ocSceneOptions.setVoxelSize(voxelSize.x,voxelSize.y, voxelSize.z);
 	Scene ocScene = Scene(ocSceneOptions, sceneName);
 
 	//Add meshes to scene
+	cout << "Adding meshes\n";
 	vector<Model*> ocModels;
 	Matrix4x4 identityMat;
 	for(unsigned int i = 0; i < meshes.size(); i++)
@@ -159,10 +315,13 @@ void PVSPreprocessor::buildPVS()
 	}
 
 	//Generate voxels from the scene
+	cout << "Generating voxels\n";
  	PVSGenerator gen = PVSGenerator(ocScene);
+	cout << "Generating database\n";
 	shared_ptr<PVSDatabase> ocDatabase = gen.generatePVSDatabase();
 
 	//Export to file
+	cout << "Exporting\n";
 	PVSDatabaseExporter dbExporter(*ocDatabase);
 	int allocatedSize = dbExporter.getBufferSize();
 	char *buffer = new char[allocatedSize];
